@@ -1,0 +1,77 @@
+<html>
+    <head>
+    <title>Device Ready Example</title>
+
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" charset="utf-8" src="example.js"></script>
+    </head>
+    <body onload="onLoad()">
+	<button onclick="getPic()">click</button>
+	
+	<button onclick="getImage()">Upload a Photo</button>
+	<img src="" height=50 width=50 id='pic'>
+	<img src="" height=80 width=80 id='gal'>
+    </body>
+</html>
+<script>
+function onLoad() {
+    document.addEventListener("deviceready", onDeviceReady, false);
+}
+
+// device APIs are available
+//
+function onDeviceReady() {
+    console.log("Device Ready to use");
+}
+function getPic(){
+	
+	navigator.camera.getPicture(
+	function (imageURI)
+	{
+	
+	var image=document.getElementById('pic');
+	image.src=imageURI;
+	},
+	function(msg){alert("failed "+msg);},
+	{quality:50,
+	destinationType:Camera.DestinationType.FILE_URI}
+	
+	);
+	}
+	
+	
+	function getImage() {
+ navigator.camera.getPicture(viewImage, function(message) {
+ alert('get picture failed');
+ }, {
+ quality: 100,
+ destinationType: navigator.camera.DestinationType.FILE_URI,
+ sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY
+ });
+}
+function viewImage(imageURI){
+    var image=document.getElementById('gal');
+	image.src=imageURI;
+}
+
+function uploadPhoto(imageURI) {
+alert("upload");
+ var options = new FileUploadOptions();
+ options.fileKey = "file";
+ options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
+ options.mimeType = "image/jpeg";
+ console.log(options.fileName);
+ var params = new Object();
+ params.value1 = "test";
+ params.value2 = "param";
+ options.params = params;
+ options.chunkedMode = false;
+
+var ft = new FileTransfer();
+ ft.upload(imageURI, "http://192.168.1.22/phonegapserver/Test/test.php", function(result){
+ alert(JSON.stringify(result));
+ }, function(error){
+ alert(JSON.stringify(error));
+ }, options);
+ }
+</script>
